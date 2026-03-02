@@ -264,6 +264,7 @@ const AppContent: React.FC = () => {
     setProjects: projectMgmt.setProjects,
     setSelectedProject: projectMgmt.setSelectedProject,
     setShowHomeView: projectMgmt.setShowHomeView,
+    setShowSkillsView: projectMgmt.setShowSkillsView,
     setShowEditorMode,
     setShowKanban,
     setShowTaskModal,
