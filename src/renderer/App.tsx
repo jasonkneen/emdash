@@ -267,6 +267,25 @@ const AppContent: React.FC = () => {
     activateProjectView: projectMgmt.activateProjectView,
   });
 
+  // Focus task when OS notification is clicked
+  const allTasksRef = useRef(taskMgmt.allTasks);
+  useEffect(() => {
+    allTasksRef.current = taskMgmt.allTasks;
+  }, [taskMgmt.allTasks]);
+
+  useEffect(() => {
+    const cleanup = window.electronAPI.onNotificationFocusTask((taskId: string) => {
+      const entry = allTasksRef.current.find((t) => t.task.id === taskId);
+      if (!entry) return;
+      const { task, project } = entry;
+      if (!projectMgmt.selectedProject || projectMgmt.selectedProject.id !== project.id) {
+        projectMgmt.activateProjectView(project);
+      }
+      taskMgmt.handleSelectTask(task);
+    });
+    return cleanup;
+  }, [projectMgmt.selectedProject, projectMgmt.activateProjectView, taskMgmt.handleSelectTask]);
+
   // --- Panel layout ---
   const {
     defaultPanelLayout,

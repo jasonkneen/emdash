@@ -145,6 +145,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on(channel, wrapped);
     return () => ipcRenderer.removeListener(channel, wrapped);
   },
+  onNotificationFocusTask: (listener: (taskId: string) => void) => {
+    const channel = 'notification:focus-task';
+    const wrapped = (_: Electron.IpcRendererEvent, taskId: string) => listener(taskId);
+    ipcRenderer.on(channel, wrapped);
+    return () => ipcRenderer.removeListener(channel, wrapped);
+  },
   terminalGetTheme: () => ipcRenderer.invoke('terminal:getTheme'),
 
   // App settings

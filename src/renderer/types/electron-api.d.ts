@@ -393,6 +393,7 @@ declare global {
       onAgentEvent: (
         listener: (event: AgentEvent, meta: { appFocused: boolean }) => void
       ) => () => void;
+      onNotificationFocusTask: (listener: (taskId: string) => void) => () => void;
       terminalGetTheme: () => Promise<{
         ok: boolean;
         config?: {
@@ -1362,6 +1363,7 @@ export interface ElectronAPI {
   onAgentEvent: (
     listener: (event: AgentEvent, meta: { appFocused: boolean }) => void
   ) => () => void;
+  onNotificationFocusTask: (listener: (taskId: string) => void) => () => void;
 
   // Worktree management
   worktreeCreate: (args: {
