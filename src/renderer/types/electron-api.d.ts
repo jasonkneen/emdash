@@ -67,6 +67,7 @@ declare global {
       onMenuCheckForUpdates: (listener: () => void) => () => void;
       onMenuUndo: (listener: () => void) => () => void;
       onMenuRedo: (listener: () => void) => () => void;
+      onMenuCloseTab: (listener: () => void) => () => void;
 
       // App settings
       getSettings: () => Promise<{
@@ -149,9 +150,11 @@ declare global {
           interface?: {
             autoRightSidebarBehavior?: boolean;
             theme?: 'light' | 'dark' | 'dark-black' | 'system';
+            taskHoverAction?: 'delete' | 'archive';
           };
           terminal?: {
             fontFamily: string;
+            autoCopyOnSelection: boolean;
           };
           defaultOpenInApp?: string;
           hiddenOpenInApps?: string[];
@@ -237,9 +240,11 @@ declare global {
           interface?: {
             autoRightSidebarBehavior?: boolean;
             theme?: 'light' | 'dark' | 'dark-black' | 'system';
+            taskHoverAction?: 'delete' | 'archive';
           };
           terminal?: {
             fontFamily?: string;
+            autoCopyOnSelection?: boolean;
           };
           defaultOpenInApp?: string;
           hiddenOpenInApps?: string[];
@@ -324,9 +329,11 @@ declare global {
           interface?: {
             autoRightSidebarBehavior?: boolean;
             theme?: 'light' | 'dark' | 'dark-black' | 'system';
+            taskHoverAction?: 'delete' | 'archive';
           };
           terminal?: {
             fontFamily: string;
+            autoCopyOnSelection: boolean;
           };
           defaultOpenInApp?: string;
           hiddenOpenInApps?: string[];
@@ -1356,6 +1363,7 @@ export interface ElectronAPI {
   onMenuCheckForUpdates: (listener: () => void) => () => void;
   onMenuUndo: (listener: () => void) => () => void;
   onMenuRedo: (listener: () => void) => () => void;
+  onMenuCloseTab: (listener: () => void) => () => void;
 
   // App info
   getVersion: () => Promise<string>;

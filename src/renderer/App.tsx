@@ -209,6 +209,14 @@ const AppContent: React.FC = () => {
     };
   }, []);
 
+  // Listen for native menu "Close Tab" (Cmd+W) — dispatches to active ChatInterface
+  useEffect(() => {
+    const cleanup = window.electronAPI.onMenuCloseTab?.(() => {
+      window.dispatchEvent(new CustomEvent('emdash:close-active-chat'));
+    });
+    return () => cleanup?.();
+  }, []);
+
   // --- App initialization (version, platform, loadAppData) ---
   // The callbacks here execute inside a useEffect (after render), so all hooks
   // are already initialized by the time they run — no temporal dead zone issue.
