@@ -31,6 +31,12 @@ const PRESERVE_KEYS = new Set([
   'NODE_ENV',
 ]);
 
+export const SHELL_ENV_CAPTURE_GUARD: Record<string, string> = {
+  DISABLE_AUTO_UPDATE: 'true',
+  ZSH_TMUX_AUTOSTART: 'false',
+  ZSH_TMUX_AUTOSTARTED: 'true',
+};
+
 const USER_BIN_DIRS = [path.join(os.homedir(), '.local', 'bin')];
 
 function pathEntryExists(entry: string): boolean {
@@ -121,11 +127,7 @@ export async function resolveUserEnv(): Promise<void> {
       // and fork-bomb the app on Linux. See #1679.
       env: {
         ...buildExternalToolEnv(),
-        // Prevent oh-my-zsh and tmux plugins from producing extra output or
-        // blocking the env capture.
-        DISABLE_AUTO_UPDATE: 'true',
-        ZSH_TMUX_AUTOSTART: 'false',
-        ZSH_TMUX_AUTOSTARTED: 'true',
+        ...SHELL_ENV_CAPTURE_GUARD,
       },
     });
 
