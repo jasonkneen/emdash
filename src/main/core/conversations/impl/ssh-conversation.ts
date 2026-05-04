@@ -18,6 +18,7 @@ import { events } from '@main/lib/events';
 import { log } from '@main/lib/logger';
 import { telemetryService } from '@main/lib/telemetry';
 import { buildAgentCommand } from './agent-command';
+import { resolveProviderEnv } from './provider-env';
 
 const DEFAULT_COLS = 80;
 const DEFAULT_ROWS = 24;
@@ -96,6 +97,7 @@ export class SshConversationProvider implements ConversationProvider {
       isResuming,
       initialPrompt,
     });
+    const providerEnv = resolveProviderEnv(providerConfig);
 
     const tmuxSessionName = this.tmux ? makeTmuxSessionName(sessionId) : undefined;
 
@@ -112,7 +114,7 @@ export class SshConversationProvider implements ConversationProvider {
       resume: isResuming,
     };
 
-    const sshCommand = resolveSshCommand('agent', cfg, this.taskEnvVars);
+    const sshCommand = resolveSshCommand('agent', cfg, { ...providerEnv, ...this.taskEnvVars });
 
     const result = await openSsh2Pty(this.proxy.client, {
       id: sessionId,
