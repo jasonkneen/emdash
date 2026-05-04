@@ -9,6 +9,7 @@ import { useLegacyPortStatus } from './lib/hooks/useLegacyPort';
 import { WorkspaceLayoutContextProvider } from './lib/layout/layout-provider';
 import { WorkspaceViewProvider } from './lib/layout/provider';
 import { ModalProvider } from './lib/modal/modal-provider';
+import { FeatureFlagOverrideProvider } from './lib/providers/feature-flag-override-context';
 import { GithubContextProvider } from './lib/providers/github-context-provider';
 import { PostHogFeatureFlagsProvider } from './lib/providers/posthog-provider';
 import { ThemeProvider } from './lib/providers/theme-provider';
@@ -94,7 +95,9 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <PostHogFeatureFlagsProvider>
-        <AppContent />
+        <FeatureFlagOverrideProvider>
+          <AppContent />
+        </FeatureFlagOverrideProvider>
       </PostHogFeatureFlagsProvider>
     </QueryClientProvider>
   );

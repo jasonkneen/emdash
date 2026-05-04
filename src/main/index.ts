@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { config as dotenvConfig } from 'dotenv';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import dockIcon from '@/assets/images/emdash/icon-dock.png?asset';
 import { PRODUCT_NAME } from '@shared/app-identity';
@@ -23,6 +24,10 @@ import { log } from './lib/logger';
 import * as telemetry from './lib/telemetry';
 import { rpcRouter } from './rpc';
 import { resolveUserEnv } from './utils/userEnv';
+
+if (import.meta.env.DEV) {
+  dotenvConfig({ path: '.env.local', override: false });
+}
 
 if (process.platform === 'linux') {
   app.commandLine.appendSwitch('ozone-platform-hint', 'auto');

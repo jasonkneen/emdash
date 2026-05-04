@@ -435,3 +435,19 @@ export function setOnboardingSeen(flag: boolean): void {
 export async function checkAndReportDailyActiveUser(): Promise<void> {
   return checkDailyActiveUser();
 }
+
+export function getPosthogConfig(): { apiKey: string | undefined; apiHost: string | undefined } {
+  return { apiKey: apiKey ?? undefined, apiHost: host ?? undefined };
+}
+
+export function getDevFlagOverrides(): Record<string, boolean> {
+  if (!import.meta.env.DEV) return {};
+  const overrides: Record<string, boolean> = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (key.startsWith('FLAG_')) {
+      const flagName = key.slice(5).toLowerCase().replace(/_/g, '-');
+      overrides[flagName] = value === 'true' || value === '1';
+    }
+  }
+  return overrides;
+}
