@@ -1,5 +1,6 @@
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { projectManager } from '@main/core/projects/project-manager';
+import { taskEvents } from '@main/core/tasks/task-events';
 import { taskManager } from '@main/core/tasks/task-manager';
 import { db } from '@main/db/client';
 import { tasks } from '@main/db/schema';
@@ -22,6 +23,7 @@ export async function archiveTask(projectId: string, taskId: string): Promise<vo
     })
     .where(eq(tasks.id, taskId));
   capture('task_archived', { project_id: projectId, task_id: taskId });
+  taskEvents._emit('task:archived', taskId, projectId);
 
   if (!project) return;
 

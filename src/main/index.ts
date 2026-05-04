@@ -17,6 +17,7 @@ import { gitWatcherRegistry } from './core/git/git-watcher-registry';
 import { githubConnectionService } from './core/github/services/github-connection-service';
 import { projectManager } from './core/projects/project-manager';
 import { prSyncScheduler } from './core/pull-requests/pr-sync-scheduler';
+import { searchService } from './core/search/search-service';
 import { appSettingsService } from './core/settings/settings-service';
 import { updateService } from './core/updates/update-service';
 import { initializeDatabase } from './db/initialize';
@@ -74,6 +75,7 @@ void app.whenReady().then(async () => {
 
   try {
     await initializeDatabase();
+    searchService.initialize();
     void editorBufferService.pruneStale();
   } catch (error) {
     log.error('Failed to initialize database:', error);
