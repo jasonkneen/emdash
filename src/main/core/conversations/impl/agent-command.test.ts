@@ -72,6 +72,16 @@ describe('buildAgentCommand', () => {
     expect(result.args).toEqual(['--resume', 'existing session', 'conv-1']);
   });
 
+  it('parses multi-token session id flags', () => {
+    const result = buildAgentCommand({
+      providerId: 'claude',
+      providerConfig: makeConfig({ sessionIdFlag: '--session id' }),
+      sessionId: 'conv-1',
+    });
+
+    expect(result.args).toEqual(['--session', 'id', 'conv-1']);
+  });
+
   it('appends extra args', () => {
     const result = buildAgentCommand({
       providerId: 'claude',

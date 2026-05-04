@@ -115,7 +115,7 @@ export function buildAgentCommand({
       args.push(sessionId);
     }
   } else if (providerConfig?.sessionIdFlag) {
-    args.push(providerConfig.sessionIdFlag, sessionId);
+    args.push(...parseArgField(providerConfig.sessionIdFlag), sessionId);
   }
 
   if (autoApprove && providerConfig?.autoApproveFlag) {
