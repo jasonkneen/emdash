@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { log } from '@main/lib/logger';
+import { buildExternalToolEnv } from './childProcessEnv';
 import { getWindowsEnvValue, prependWindowsPathEntry } from './windows-env';
 
 /**
@@ -114,13 +115,19 @@ export async function resolveUserEnv(): Promise<void> {
   }
 
   const shell = process.env.SHELL ?? (process.platform === 'darwin' ? '/bin/zsh' : '/bin/bash');
+  const baseEnv = buildExternalToolEnv();
 
   try {
     const raw = execSync(`${shell} -ilc 'env'`, {
       encoding: 'utf8',
       timeout: 5_000,
+      // Route through buildExternalToolEnv so AppImage runtime vars (APPIMAGE,
+      // APPDIR, ARGV0, ...) and `/tmp/.mount_*` PATH entries don't leak into
+      // the probe shell. Otherwise login-shell hooks that resolve a binary by
+      // name through PATH (mise/starship/oh-my-zsh) can re-enter the AppImage
+      // and fork-bomb the app on Linux. See #1679.
       env: {
-        ...process.env,
+        ...baseEnv,
         ...SHELL_ENV_CAPTURE_GUARD,
       },
     });
@@ -131,7 +138,7 @@ export async function resolveUserEnv(): Promise<void> {
       if (PRESERVE_KEYS.has(key)) continue;
 
       if (key === 'PATH') {
-        const current = process.env.PATH ?? '';
+        const current = baseEnv.PATH ?? '';
         process.env.PATH = mergePath(value, current);
       } else {
         process.env[key] = value;
