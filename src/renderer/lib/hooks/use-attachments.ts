@@ -4,6 +4,8 @@ import { useCallback, useRef, useState } from 'react';
 export function useAttachments() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const dragCounterRef = useRef(0);
 
   const addFiles = useCallback((files: File[]) => {
     if (files.length > 0) {
@@ -28,7 +30,7 @@ export function useAttachments() {
   );
 
   const handlePaste = useCallback(
-    (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    (event: React.ClipboardEvent) => {
       const items = event.clipboardData?.items;
       if (!items) return;
 
@@ -45,26 +47,49 @@ export function useAttachments() {
   );
 
   const handleDrop = useCallback(
-    (event: React.DragEvent<HTMLFormElement>) => {
+    (event: React.DragEvent) => {
       event.preventDefault();
       event.stopPropagation();
+      dragCounterRef.current = 0;
+      setIsDraggingOver(false);
       const files = Array.from(event.dataTransfer?.files ?? []);
       addFiles(files.filter((file) => file.type.startsWith('image/')));
     },
     [addFiles]
   );
 
-  const handleDragOver = useCallback((event: React.DragEvent<HTMLFormElement>) => {
+  const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
   }, []);
 
+  const handleDragEnter = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounterRef.current += 1;
+    if (dragCounterRef.current === 1) {
+      setIsDraggingOver(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounterRef.current -= 1;
+    if (dragCounterRef.current === 0) {
+      setIsDraggingOver(false);
+    }
+  }, []);
+
   const reset = useCallback(() => {
     setAttachments([]);
+    dragCounterRef.current = 0;
+    setIsDraggingOver(false);
   }, []);
 
   return {
     attachments,
+    isDraggingOver,
     fileInputRef,
     removeAttachment,
     openFilePicker,
@@ -72,6 +97,8 @@ export function useAttachments() {
     handlePaste,
     handleDrop,
     handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
     reset,
   };
 }
